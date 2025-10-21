@@ -2,6 +2,7 @@ const DEFAULT_SETTINGS = {
   colorA: '#FF0000',
   colorB: '#0000FF',
   bgColor: '#FFFFFF',
+  algorithm: 'char', // New default setting
   isEnabled: false,
   startTime: null,
   elapsedTime: 0
@@ -14,6 +15,7 @@ const toggleButton = document.getElementById('toggleButton');
 const colorAInput = document.getElementById('colorA');
 const colorBInput = document.getElementById('colorB');
 const bgColorInput = document.getElementById('bgColor');
+const algorithmSelect = document.getElementById('algorithmSelect'); // New element reference
 const timerDisplay = document.getElementById('timerDisplay');
 
 // --- Timer Functions (Task 2.4) ---
@@ -56,19 +58,25 @@ function stopTimer() {
   updateTimerDisplay();
 }
 
-// --- Settings Functions (Task 2.2) ---
+// --- Settings Functions (Task 2.2 & 3.3) ---
 
 function saveSettings() {
   currentSettings.colorA = colorAInput.value;
   currentSettings.colorB = colorBInput.value;
   currentSettings.bgColor = bgColorInput.value;
+  currentSettings.algorithm = algorithmSelect.value; // Save algorithm
   chrome.storage.local.set({
     colorA: currentSettings.colorA,
     colorB: currentSettings.colorB,
     bgColor: currentSettings.bgColor,
+    algorithm: currentSettings.algorithm, // Save algorithm
     isEnabled: currentSettings.isEnabled,
     elapsedTime: currentSettings.elapsedTime
   });
+  // If the filter is already enabled, we need to re-apply it with the new settings
+  if (currentSettings.isEnabled) {
+    sendSettingsToContentScript();
+  }
 }
 
 function loadSettings() {
@@ -78,6 +86,7 @@ function loadSettings() {
     colorAInput.value = currentSettings.colorA;
     colorBInput.value = currentSettings.colorB;
     bgColorInput.value = currentSettings.bgColor;
+    algorithmSelect.value = currentSettings.algorithm; // Load algorithm
 
     // Update button text based on saved state
     toggleButton.textContent = currentSettings.isEnabled ? 'Disable' : 'Enable';
@@ -99,6 +108,16 @@ function loadSettings() {
   });
 }
 
+function sendSettingsToContentScript() {
+  chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    const tab = tabs[0];
+    chrome.tabs.sendMessage(tab.id, {
+      action: "toggleFilter",
+      settings: currentSettings
+    });
+  });
+}
+
 // --- Event Listeners ---
 
 toggleButton.addEventListener('click', () => {
@@ -111,21 +130,13 @@ toggleButton.addEventListener('click', () => {
     stopTimer();
   }
 
-  saveSettings(); // Save the new isEnabled state
-
-  // Send message to content script with current settings (Task 2.3 setup)
-  chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-    const tab = tabs[0];
-    chrome.tabs.sendMessage(tab.id, {
-      action: "toggleFilter",
-      settings: currentSettings
-    });
-  });
+  saveSettings(); // Save the new isEnabled state and send message
 });
 
 colorAInput.addEventListener('change', saveSettings);
 colorBInput.addEventListener('change', saveSettings);
 bgColorInput.addEventListener('change', saveSettings);
+algorithmSelect.addEventListener('change', saveSettings); // New event listener
 
 // Initialize
 document.addEventListener('DOMContentLoaded', loadSettings);

@@ -1,20 +1,54 @@
 let isFilterEnabled = false;
 const WRAPPER_CLASS = 'stereo-reader-wrapper';
-let colorA = 'red'; // Now a variable
-let colorB = 'blue'; // Now a variable
-let bgColor = ''; // New variable for background color
+let colorA = 'red';
+let colorB = 'blue';
+let bgColor = '';
+let algorithm = 'char'; // New variable for algorithm
 
-// Function to split text and wrap characters in alternating colors
-function wrapText(text) {
+// --- Algorithm Implementations (Task 3.2) ---
+
+// Character-based algorithm (Existing PoC logic)
+function wrapCharText(text) {
   let wrappedHtml = '';
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
-    // Basic alternating character algorithm (Task 1.4)
-    const color = i % 2 === 0 ? colorA : colorB; // Use variables
+    const color = i % 2 === 0 ? colorA : colorB;
     wrappedHtml += `<span style="color: ${color};">${char}</span>`;
   }
   return wrappedHtml;
 }
+
+// Word-based algorithm (New logic)
+function wrapWordText(text) {
+  // Split by whitespace, keeping the delimiters
+  const parts = text.split(/(\s+)/);
+  let wrappedHtml = '';
+  let wordIndex = 0;
+
+  for (const part of parts) {
+    if (part.trim().length === 0) {
+      // It's a space/delimiter, just append it
+      wrappedHtml += part;
+    } else {
+      // It's a word, alternate color based on word index
+      const color = wordIndex % 2 === 0 ? colorA : colorB;
+      wrappedHtml += `<span style="color: ${color};">${part}</span>`;
+      wordIndex++;
+    }
+  }
+  return wrappedHtml;
+}
+
+// Dispatcher function
+function wrapText(text) {
+  if (algorithm === 'word') {
+    return wrapWordText(text);
+  }
+  // Default to character-based
+  return wrapCharText(text);
+}
+
+// --- Core Traversal and Filter Functions ---
 
 // Recursive function to find and replace text nodes (Task 1.3)
 function traverseAndWrap(node) {
@@ -81,18 +115,24 @@ function removeFilter() {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "toggleFilter") {
-    // Update colors from settings (Task 2.3)
+    // Update settings
     if (request.settings) {
       colorA = request.settings.colorA;
       colorB = request.settings.colorB;
       bgColor = request.settings.bgColor;
+      algorithm = request.settings.algorithm; // Update algorithm
     }
 
+    // If filter is enabled, we need to remove it first before applying the new settings
     if (isFilterEnabled) {
       removeFilter();
-    } else {
+    }
+
+    // If the user toggled it on, apply the filter with new settings
+    if (request.settings.isEnabled) {
       applyFilter();
     }
+    
     // Send back the new status
     sendResponse({status: isFilterEnabled ? 'enabled' : 'disabled'});
   }
