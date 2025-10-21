@@ -62,15 +62,19 @@ This project will be broken down into four distinct phases to ensure steady prog
     * **Algorithm C (Smart Character):** Alternate characters but keep punctuation and spaces with the preceding character.
 * **Task 3.3 (Optional):** Add a dropdown in the UI to allow the user to select which splitting algorithm they prefer.
 
-### Phase 4: Refinement & Branding
-*Goal: Polish the extension, fix bugs, and give it a proper identity.*
-* **Task 4.1:** Test the extension on a variety of websites (news articles, social media, code repositories) and fix any compatibility issues.
-    * **Note:** Testing should focus on dynamic content (e.g., infinite scroll, single-page applications) and ensuring the filter is re-applied correctly using a `MutationObserver` (not yet implemented).
-* **Task 4.2:** Optimize performance. Ensure that applying the filter to large pages doesn't cause significant lag.
-* **Task 4.3: (Brainstorming)** Decide on a final project name.
-    * *Ideas:* StereoRead, FusionText, BinocuRead, VisionVerb, Anaglyph Reader, Strabo-Tool.
-* **Task 4.4: (Design)** Create a simple and clean icon for the extension.
-    * *Ideas:* An icon showing two overlapping, colored circles (like a Venn diagram), a stylized pair of glasses, the letters "R" and "L" in different colors.
+### Phase 4: Testing, Optimization & Branding
+*Goal: Test the implemented features, optimize performance, and finalize branding.*
+* **Task 4.1: Functional Testing & Bug Fixes**
+    * **Action:** Load the extension in a browser and test on a variety of websites (news articles, social media, code repositories).
+    * **Focus:** Verify that the filter applies correctly, the toggle works, settings persist, the timer functions, and the `MutationObserver` handles dynamic content.
+    * **Note:** Testing should focus on dynamic content (e.g., infinite scroll, single-page applications) and ensuring the filter is re-applied correctly using a `MutationObserver` (Implemented).
+* **Task 4.2: Performance Optimization**
+    * **Action:** Profile the extension's performance on large pages.
+    * **Goal:** Ensure that applying the filter to large pages doesn't cause significant lag.
+* **Task 4.3: Final Branding**
+    * **Status:** Complete. Project name is **FusionText**.
+* **Task 4.4: Icon Design**
+    * **Status:** Complete (Placeholder icons added).
 
 ---
 
