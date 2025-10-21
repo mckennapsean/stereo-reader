@@ -1,7 +1,8 @@
 let isFilterEnabled = false;
 const WRAPPER_CLASS = 'stereo-reader-wrapper';
-const COLOR_A = 'red';
-const COLOR_B = 'blue';
+let colorA = 'red'; // Now a variable
+let colorB = 'blue'; // Now a variable
+let bgColor = ''; // New variable for background color
 
 // Function to split text and wrap characters in alternating colors
 function wrapText(text) {
@@ -9,7 +10,7 @@ function wrapText(text) {
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
     // Basic alternating character algorithm (Task 1.4)
-    const color = i % 2 === 0 ? COLOR_A : COLOR_B;
+    const color = i % 2 === 0 ? colorA : colorB; // Use variables
     wrappedHtml += `<span style="color: ${color};">${char}</span>`;
   }
   return wrappedHtml;
@@ -45,6 +46,11 @@ function traverseAndWrap(node) {
 function applyFilter() {
   if (isFilterEnabled) return;
 
+  // Apply background color (Task 2.3)
+  if (bgColor && bgColor !== '#FFFFFF') {
+    document.body.style.backgroundColor = bgColor;
+  }
+
   // Start traversal from the body
   traverseAndWrap(document.body);
 
@@ -54,6 +60,9 @@ function applyFilter() {
 
 function removeFilter() {
   if (!isFilterEnabled) return;
+
+  // Remove background color (Task 2.3)
+  document.body.style.backgroundColor = '';
 
   // Find all wrapped elements
   const wrappers = document.querySelectorAll(`.${WRAPPER_CLASS}`);
@@ -72,6 +81,13 @@ function removeFilter() {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "toggleFilter") {
+    // Update colors from settings (Task 2.3)
+    if (request.settings) {
+      colorA = request.settings.colorA;
+      colorB = request.settings.colorB;
+      bgColor = request.settings.bgColor;
+    }
+
     if (isFilterEnabled) {
       removeFilter();
     } else {
