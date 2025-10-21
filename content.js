@@ -3,11 +3,59 @@ const WRAPPER_CLASS = 'stereo-reader-wrapper';
 let colorA = 'red';
 let colorB = 'blue';
 let bgColor = '';
-let algorithm = 'char'; // New variable for algorithm
+let algorithm = 'char';
 
-// --- Algorithm Implementations (Task 3.2) ---
+// --- MutationObserver Setup ---
+let observer = null;
+const observerConfig = { childList: true, subtree: true, characterData: true };
 
-// Character-based algorithm (Existing PoC logic)
+function removeWrappers() {
+  // Find all wrapped elements
+  const wrappers = document.querySelectorAll(`.${WRAPPER_CLASS}`);
+
+  wrappers.forEach(wrapper => {
+    const originalText = wrapper.getAttribute('data-original-text');
+    if (originalText !== null) {
+      const textNode = document.createTextNode(originalText);
+      wrapper.parentNode.replaceChild(textNode, wrapper);
+    }
+  });
+}
+
+function handleMutations(mutationsList, observer) {
+  // Check if any mutation occurred that might affect text content
+  let shouldReapply = false;
+  for (const mutation of mutationsList) {
+    if (mutation.type === 'childList' || mutation.type === 'characterData') {
+      shouldReapply = true;
+      break;
+    }
+  }
+
+  if (shouldReapply) {
+    // Temporarily disconnect to prevent infinite loops during re-application
+    observer.disconnect();
+    
+    // 1. Remove existing filter
+    removeWrappers(); 
+    
+    // 2. Re-apply filter
+    traverseAndWrap(document.body);
+    
+    // 3. Reconnect observer
+    observer.observe(document.body, observerConfig);
+  }
+}
+
+function initObserver() {
+  if (!observer) {
+    observer = new MutationObserver(handleMutations);
+  }
+}
+
+// --- Algorithm Implementations ---
+
+// Character-based algorithm
 function wrapCharText(text) {
   let wrappedHtml = '';
   for (let i = 0; i < text.length; i++) {
@@ -18,7 +66,7 @@ function wrapCharText(text) {
   return wrappedHtml;
 }
 
-// Word-based algorithm (New logic)
+// Word-based algorithm
 function wrapWordText(text) {
   // Split by whitespace, keeping the delimiters
   const parts = text.split(/(\s+)/);
@@ -50,7 +98,7 @@ function wrapText(text) {
 
 // --- Core Traversal and Filter Functions ---
 
-// Recursive function to find and replace text nodes (Task 1.3)
+// Recursive function to find and replace text nodes
 function traverseAndWrap(node) {
   // Skip script, style, and already-wrapped elements
   if (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE' || node.nodeName === 'NOSCRIPT' || node.classList?.contains(WRAPPER_CLASS)) {
@@ -80,7 +128,7 @@ function traverseAndWrap(node) {
 function applyFilter() {
   if (isFilterEnabled) return;
 
-  // Apply background color (Task 2.3)
+  // Apply background color
   if (bgColor && bgColor !== '#FFFFFF') {
     document.body.style.backgroundColor = bgColor;
   }
@@ -88,28 +136,28 @@ function applyFilter() {
   // Start traversal from the body
   traverseAndWrap(document.body);
 
-  console.log('Stereo Reader: Filter Enabled');
+  // Start observing for dynamic content changes
+  initObserver();
+  observer.observe(document.body, observerConfig);
+
+  console.log('FusionText: Filter Enabled');
   isFilterEnabled = true;
 }
 
 function removeFilter() {
   if (!isFilterEnabled) return;
 
-  // Remove background color (Task 2.3)
+  // Stop observing
+  if (observer) {
+      observer.disconnect();
+  }
+
+  // Remove background color
   document.body.style.backgroundColor = '';
 
-  // Find all wrapped elements
-  const wrappers = document.querySelectorAll(`.${WRAPPER_CLASS}`);
+  removeWrappers();
 
-  wrappers.forEach(wrapper => {
-    const originalText = wrapper.getAttribute('data-original-text');
-    if (originalText !== null) {
-      const textNode = document.createTextNode(originalText);
-      wrapper.parentNode.replaceChild(textNode, wrapper);
-    }
-  });
-
-  console.log('Stereo Reader: Filter Disabled');
+  console.log('FusionText: Filter Disabled');
   isFilterEnabled = false;
 }
 
@@ -120,7 +168,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       colorA = request.settings.colorA;
       colorB = request.settings.colorB;
       bgColor = request.settings.bgColor;
-      algorithm = request.settings.algorithm; // Update algorithm
+      algorithm = request.settings.algorithm;
     }
 
     // If filter is enabled, we need to remove it first before applying the new settings
