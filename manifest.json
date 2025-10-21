@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Stereo Reader",
+  "name": "FusionText",
   "version": "1.0",
   "description": "A tool for vision therapy by selectively coloring text.",
   "permissions": [

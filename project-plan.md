@@ -65,6 +65,7 @@ This project will be broken down into four distinct phases to ensure steady prog
 ### Phase 4: Refinement & Branding
 *Goal: Polish the extension, fix bugs, and give it a proper identity.*
 * **Task 4.1:** Test the extension on a variety of websites (news articles, social media, code repositories) and fix any compatibility issues.
+    * **Note:** Testing should focus on dynamic content (e.g., infinite scroll, single-page applications) and ensuring the filter is re-applied correctly using a `MutationObserver` (not yet implemented).
 * **Task 4.2:** Optimize performance. Ensure that applying the filter to large pages doesn't cause significant lag.
 * **Task 4.3: (Brainstorming)** Decide on a final project name.
     * *Ideas:* StereoRead, FusionText, BinocuRead, VisionVerb, Anaglyph Reader, Strabo-Tool.
