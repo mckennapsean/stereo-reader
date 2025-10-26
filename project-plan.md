@@ -62,20 +62,28 @@ This project will be broken down into four distinct phases to ensure steady prog
     * **Algorithm C (Smart Character):** Alternate characters but keep punctuation and spaces with the preceding character.
 * **Task 3.3 (Optional):** Add a dropdown in the UI to allow the user to select which splitting algorithm they prefer.
 
-### Phase 4: Testing, Optimization & Branding
-*Goal: Test the implemented features, optimize performance, and finalize branding.*
+### Phase 4: Testing, Optimization & Finalization
+*Goal: Test the implemented features, optimize performance, and finalize the product for release.*
 * **Task 4.1: Functional Testing & Bug Fixes**
+    * **Status:** In Progress (Manual validation ongoing).
     * **Action:** Load the extension in a browser and test on a variety of websites (news articles, social media, code repositories).
     * **Focus:** Verify that the filter applies correctly, the toggle works, settings persist, the timer functions, and the `MutationObserver` handles dynamic content.
     * **Note:** Testing should focus on dynamic content (e.g., infinite scroll, single-page applications) and ensuring the filter is re-applied correctly using a `MutationObserver` (Implemented).
 * **Task 4.2: Performance Optimization**
+    * **Status:** Pending.
     * **Action:** Profile the extension's performance on large pages.
     * **Goal:** Ensure that applying the filter to large pages doesn't cause significant lag.
 * **Task 4.3: Final Branding**
     * **Status:** Complete. Project name is **FusionText**.
 * **Task 4.4: Icon Design**
     * **Status:** Complete (Placeholder icons added).
-
+* **Task 4.5: Add Disclaimer to Documentation**
+    * **Status:** Pending.
+    * **Action:** Add a disclaimer to the README.md stating that the tool is not a substitute for professional medical advice and should be used at the user's own risk.
+* **Task 4.6: Implement Text Scaling/Zoom/Reset**
+    * **Status:** Pending.
+    * **Action:** Investigate and implement controls in the popup UI to allow the user to scale the text size (zoom in/out) and reset the zoom level, as this was identified as a valuable feature during manual testing.
+naw
 ---
 
 ## 4. Technology Stack

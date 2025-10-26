@@ -4,6 +4,7 @@ let colorA = 'red';
 let colorB = 'blue';
 let bgColor = '';
 let algorithm = 'char';
+let textScale = 100; // New setting for text scaling
 
 // --- MutationObserver Setup ---
 let observer = null;
@@ -61,7 +62,7 @@ function wrapCharText(text) {
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
     const color = i % 2 === 0 ? colorA : colorB;
-    wrappedHtml += `<span style="color: ${color};">${char}</span>`;
+    wrappedHtml += `<span style="color: ${color}; font-size: ${textScale}%;">${char}</span>`;
   }
   return wrappedHtml;
 }
@@ -80,7 +81,7 @@ function wrapWordText(text) {
     } else {
       // It's a word, alternate color based on word index
       const color = wordIndex % 2 === 0 ? colorA : colorB;
-      wrappedHtml += `<span style="color: ${color};">${part}</span>`;
+      wrappedHtml += `<span style="color: ${color}; font-size: ${textScale}%;">${part}</span>`;
       wordIndex++;
     }
   }
@@ -169,6 +170,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       colorB = request.settings.colorB;
       bgColor = request.settings.bgColor;
       algorithm = request.settings.algorithm;
+      textScale = request.settings.textScale; // New setting
     }
 
     // If filter is enabled, we need to remove it first before applying the new settings

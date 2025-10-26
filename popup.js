@@ -3,6 +3,7 @@ const DEFAULT_SETTINGS = {
   colorB: '#0000FF',
   bgColor: '#FFFFFF',
   algorithm: 'char', // New default setting
+  textScale: 100, // New default setting for text scaling (100% = normal)
   isEnabled: false,
   startTime: null,
   elapsedTime: 0
@@ -16,6 +17,9 @@ const colorAInput = document.getElementById('colorA');
 const colorBInput = document.getElementById('colorB');
 const bgColorInput = document.getElementById('bgColor');
 const algorithmSelect = document.getElementById('algorithmSelect'); // New element reference
+const textScaleRange = document.getElementById('textScaleRange');
+const textScaleValue = document.getElementById('textScaleValue');
+const resetScaleButton = document.getElementById('resetScaleButton');
 const timerDisplay = document.getElementById('timerDisplay');
 
 // --- Timer Functions (Task 2.4) ---
@@ -65,11 +69,13 @@ function saveSettings() {
   currentSettings.colorB = colorBInput.value;
   currentSettings.bgColor = bgColorInput.value;
   currentSettings.algorithm = algorithmSelect.value; // Save algorithm
+  currentSettings.textScale = parseInt(textScaleRange.value); // Save text scale
   chrome.storage.local.set({
     colorA: currentSettings.colorA,
     colorB: currentSettings.colorB,
     bgColor: currentSettings.bgColor,
     algorithm: currentSettings.algorithm, // Save algorithm
+    textScale: currentSettings.textScale, // Save text scale
     isEnabled: currentSettings.isEnabled,
     elapsedTime: currentSettings.elapsedTime
   });
@@ -87,6 +93,8 @@ function loadSettings() {
     colorBInput.value = currentSettings.colorB;
     bgColorInput.value = currentSettings.bgColor;
     algorithmSelect.value = currentSettings.algorithm; // Load algorithm
+    textScaleRange.value = currentSettings.textScale; // Load text scale
+    textScaleValue.textContent = `${currentSettings.textScale}%`; // Update display
 
     // Update button text based on saved state
     toggleButton.textContent = currentSettings.isEnabled ? 'Disable' : 'Enable';
@@ -137,6 +145,17 @@ colorAInput.addEventListener('change', saveSettings);
 colorBInput.addEventListener('change', saveSettings);
 bgColorInput.addEventListener('change', saveSettings);
 algorithmSelect.addEventListener('change', saveSettings); // New event listener
+
+textScaleRange.addEventListener('input', () => {
+  textScaleValue.textContent = `${textScaleRange.value}%`;
+  saveSettings();
+});
+
+resetScaleButton.addEventListener('click', () => {
+  textScaleRange.value = 100;
+  textScaleValue.textContent = '100%';
+  saveSettings();
+});
 
 // Initialize
 document.addEventListener('DOMContentLoaded', loadSettings);
